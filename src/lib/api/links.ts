@@ -1,40 +1,83 @@
+import { db } from "@/db";
+import { links } from "@/db/schema";
 import { LinkModel } from "@/types/model/link";
-
-const LIST_OF_LINKS_PATH = "/links";
+import { JSDOM } from "jsdom";
 
 export async function fetchLinks(query: string): Promise<Array<LinkModel>> {
-  //   const res = await fetch(`${process.env.API_URL}/${LIST_OF_LINKS_PATH}`);
-  //   if (!res.ok) {
-  //     throw new Error("Fetch link failed");
-  //   }
-  //   return res.json();
-  return [
-    {
-      title: "Tracking in React Apps - DEV Community",
-      description:
-        "Disclaimer    The code might not be a best practice, because it's based on personal... Tagged with javascript, react, monitoring, todayilearned.",
-      url: "https://dev.to/peterchu999/tracking-in-react-apps-584e",
-      favicon:
-        "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3otvb2z646ytpt1hl2rv.jpg",
-    },
-    {
-      title:
-        "🩸ChatGPT Privacy Leak: Thousands of Conversations Now Publicly Indexed by Google - DEV Community",
-      description:
-        "A space to discuss and keep up software development and manage your software career",
-      url: "https://dev.to/alifar/exposed-google-is-indexing-private-ai-conversations-heres-what-you-should-know-37m5",
-      favicon:
-        "https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3otvb2z646ytpt1hl2rv.jpg",
-    },
-    {
-      title: "Introduction to RxJava | Baeldung",
-      description:
-        "Discover RxJava - a library for composing asynchronous and event-based programs.",
-      url: "https://www.baeldung.com/rx-java",
-      favicon:
-        "https://www.baeldung.com/wp-content/uploads/2017/08/On-Baeldung-2.jpg",
-    },
-  ].filter((l) =>
-    l.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
-  );
+  const result = await db.select().from(links);
+  return result
+    .filter((l) =>
+      l.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+    )
+    .map((l) => {
+      return {
+        ...l,
+        id: `${l.id}`,
+      };
+    });
+}
+
+export async function addLinks(link: LinkModel) {
+  const result = await db
+    .insert(links)
+    .values({
+      title: link.title,
+      url: link.url,
+      description: link.description,
+      favicon: link.favicon,
+    })
+    .returning();
+  return result[0];
+}
+
+export async function scrapeLinks(url: string): Promise<LinkModel> {
+  if (!isValidUrl(url)) {
+    throw new Error("Invalid URL format.");
+  }
+
+  return await scrapeMeta(url);
+}
+
+export function isValidUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+export async function scrapeMeta(url: string): Promise<LinkModel> {
+  const res = await fetch(url);
+  const html = await res.text();
+  const dom = new JSDOM(html);
+  const doc = dom.window.document;
+
+  const title =
+    doc.querySelector("meta[property='og:title']")?.getAttribute("content") ||
+    doc.querySelector("title")?.textContent ||
+    "";
+
+  const description =
+    doc.querySelector("meta[name='description']")?.getAttribute("content") ||
+    doc
+      .querySelector("meta[property='og:description']")
+      ?.getAttribute("content") ||
+    "";
+
+  const favicon =
+    doc.querySelector("link[rel~='icon']")?.getAttribute("href") ||
+    "/favicon.ico";
+
+  const fullFavicon = favicon.startsWith("http")
+    ? favicon
+    : new URL(favicon, url).href;
+
+  return {
+    id: "0",
+    title,
+    description,
+    favicon: fullFavicon,
+    url,
+  };
 }

@@ -1,6 +1,7 @@
 export type LinkModel = {
+  id: string;
   title: string;
   url: string;
-  description: string;
-  favicon: string;
+  description: string | null;
+  favicon: string | null;
 };

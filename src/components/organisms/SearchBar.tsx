@@ -1,31 +1,30 @@
 "use client";
 
-import { useRef } from "react";
-import Button from "../atoms/Button";
-import Input from "../atoms/Input";
 import { useSearchParams, useRouter } from "next/navigation";
+import InputWithButtonForm from "../molecules/InputWithButtonForm";
+import { useCallback, useMemo } from "react";
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  function updateQueryString(name: string, value: string) {
+  const onConfirm = useCallback((inputValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(name, value);
+    params.set("q", inputValue);
     router.push(`?${params.toString()}`);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  function onButtonClick() {
-    const query = searchInputRef.current?.value || "";
-    updateQueryString("q", query);
-  }
+  const defaultValue = useMemo(() => {
+    return new URLSearchParams(searchParams.toString()).get("q") || "";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div className="flex flex-row w-[100%] gap-4">
-      <Input ref={searchInputRef} className="w-2xs" />
-      <Button onClick={onButtonClick} text="Filter" />
-    </div>
+    <InputWithButtonForm
+      onConfirm={onConfirm}
+      buttonLabel="Filter"
+      inputDefaultValue={defaultValue}
+    />
   );
 }

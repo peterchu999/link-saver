@@ -15,7 +15,11 @@ export default function LinkCard({
 }: LinkCardProps) {
   return (
     <a target="_blank" href={url} className={cn("flex gap-4", className)}>
-      <img className="max-w-xs rounded-xl" src={favicon} alt="favicon.png" />
+      <img
+        className="max-w-2xs rounded-x object-contain"
+        src={favicon || undefined}
+        alt="favicon.png"
+      />
       <div>
         <h1 className="font-bold">{title}</h1>
         <h2>
