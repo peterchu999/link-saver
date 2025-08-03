@@ -1,5 +1,5 @@
 // lib/validateLink.ts
-import { LinkModel } from "@/types/model/link";
+import { LinkViewModel } from "@/types/model/link";
 import { z } from "zod";
 
 export const LinkInputSchema = z.object({
@@ -9,6 +9,6 @@ export const LinkInputSchema = z.object({
   favicon: z.url().optional(),
 });
 
-export function validateLinkInput(data: LinkModel) {
+export function validateLinkInput(data: LinkViewModel) {
   return LinkInputSchema.safeParse(data);
 }

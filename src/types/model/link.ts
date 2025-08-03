@@ -1,7 +1,9 @@
 export type LinkModel = {
-  id: string;
+  id: number;
   title: string;
   url: string;
   description: string | null;
   favicon: string | null;
 };
+
+export type LinkViewModel = Omit<LinkModel, "id">;

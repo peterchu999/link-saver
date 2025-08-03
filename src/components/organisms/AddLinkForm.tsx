@@ -5,7 +5,7 @@ import InputWithButtonForm from "../molecules/InputWithButtonForm";
 import LinkCard from "../molecules/LinkCard";
 import { useMutation } from "@tanstack/react-query";
 
-import { LinkModel } from "@/types/model/link";
+import { LinkModel, LinkViewModel } from "@/types/model/link";
 import Button from "../atoms/Button";
 import { useRouter } from "next/navigation";
 
@@ -13,7 +13,7 @@ export default function AddLinkForm() {
   const router = useRouter();
 
   const previewMutation = useMutation({
-    mutationFn: async (url: string): Promise<LinkModel> => {
+    mutationFn: async (url: string): Promise<LinkViewModel> => {
       const res = await fetch(`/api/links`, {
         method: "POST",
         body: JSON.stringify({ event: "preview", url: url }),
@@ -32,7 +32,7 @@ export default function AddLinkForm() {
   });
 
   const addToCollectionMutation = useMutation({
-    mutationFn: async (link: LinkModel | undefined): Promise<LinkModel> => {
+    mutationFn: async (link: LinkViewModel | undefined): Promise<LinkModel> => {
       const res = await fetch(`/api/links`, {
         method: "POST",
         body: JSON.stringify({ event: "add", link }),

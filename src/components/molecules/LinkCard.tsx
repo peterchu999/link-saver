@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { cn } from "@/lib/utils";
-import { LinkModel } from "@/types/model/link";
+import { LinkViewModel } from "@/types/model/link";
 
 import { HTMLAttributes } from "react";
 
-type LinkCardProps = HTMLAttributes<HTMLBaseElement> & LinkModel;
+type LinkCardProps = HTMLAttributes<HTMLBaseElement> & LinkViewModel;
 
 export default function LinkCard({
   title,

@@ -1,20 +1,13 @@
 import { db } from "@/db";
 import { links } from "@/db/schema";
-import { LinkModel } from "@/types/model/link";
+import { LinkModel, LinkViewModel } from "@/types/model/link";
 import { JSDOM } from "jsdom";
 
 export async function fetchLinks(query: string): Promise<Array<LinkModel>> {
   const result = await db.select().from(links);
-  return result
-    .filter((l) =>
-      l.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
-    )
-    .map((l) => {
-      return {
-        ...l,
-        id: `${l.id}`,
-      };
-    });
+  return result.filter((l) =>
+    l.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+  );
 }
 
 export async function addLinks(link: LinkModel) {
@@ -30,7 +23,7 @@ export async function addLinks(link: LinkModel) {
   return result[0];
 }
 
-export async function scrapeLinks(url: string): Promise<LinkModel> {
+export async function scrapeLinks(url: string): Promise<LinkViewModel> {
   if (!isValidUrl(url)) {
     throw new Error("Invalid URL format.");
   }
@@ -47,7 +40,7 @@ export function isValidUrl(url: string): boolean {
   }
 }
 
-export async function scrapeMeta(url: string): Promise<LinkModel> {
+export async function scrapeMeta(url: string): Promise<LinkViewModel> {
   const res = await fetch(url);
   const html = await res.text();
   const dom = new JSDOM(html);
@@ -74,7 +67,6 @@ export async function scrapeMeta(url: string): Promise<LinkModel> {
     : new URL(favicon, url).href;
 
   return {
-    id: "0",
     title,
     description,
     favicon: fullFavicon,
