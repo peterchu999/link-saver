@@ -21,6 +21,12 @@ export default function AddLinkForm() {
           "Content-Type": "application/json",
         },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Request failed");
+      }
+
       return res.json();
     },
   });
@@ -34,6 +40,11 @@ export default function AddLinkForm() {
           "Content-Type": "application/json",
         },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Request failed");
+      }
 
       return res.json();
     },
@@ -67,7 +78,7 @@ export default function AddLinkForm() {
       />
       {previewMutation.isPending ? (
         <h2>loading preview...</h2>
-      ) : previewMutation.error != null ? (
+      ) : previewMutation.isError ? (
         <h2>failed to fetch preview, error {previewMutation.error.message}</h2>
       ) : (
         previewMutation.data != undefined && (
@@ -79,7 +90,7 @@ export default function AddLinkForm() {
               favicon={previewMutation.data.favicon}
               id={previewMutation.data.id}
             />
-            {addToCollectionMutation.error && (
+            {addToCollectionMutation.isError && (
               <h2 className="text-red-500">Fail to add links</h2>
             )}
             <Button onClick={onAddToCollectionClick} text="Add To Collection" />

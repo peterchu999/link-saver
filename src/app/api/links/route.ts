@@ -26,13 +26,13 @@ export async function POST(request: Request) {
         response = addLinks(reqBody.link);
         break;
       default:
-        return NextResponse.json({ error: "No Such Event", status: 400 });
+        return NextResponse.json({ error: "No Such Event" }, { status: 400 });
     }
   } catch (err) {
     if (err instanceof Error) {
-      return NextResponse.error();
+      return NextResponse.json({ error: err.message }, { status: 400 });
     }
-    return NextResponse.json({ error: "error on database", status: 400 });
+    return NextResponse.json({ error: "error on database" }, { status: 400 });
   }
   return NextResponse.json(response);
 }
