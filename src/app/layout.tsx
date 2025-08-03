@@ -9,15 +9,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  search,
 }: Readonly<{
   children: React.ReactNode;
+  search: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={`antialiased`}>
         <div className="font-sans items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
           <main className="flex flex-col gap-[32px] items-center sm:items-start w-[100%]">
-            <ReactQueryProviders>{children}</ReactQueryProviders>
+            <ReactQueryProviders>
+              {children}
+              {search}
+            </ReactQueryProviders>
           </main>
         </div>
       </body>

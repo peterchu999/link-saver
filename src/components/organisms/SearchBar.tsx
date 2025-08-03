@@ -6,12 +6,14 @@ import { useCallback, useMemo } from "react";
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const onConfirm = useCallback((inputValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("q", inputValue);
-    router.push(`?${params.toString()}`);
+
+    window.location.replace(`?${params.toString()}`);
+    // router.refresh();
+    // router.replace(`?${params.toString()}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

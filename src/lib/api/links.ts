@@ -5,6 +5,7 @@ import { JSDOM } from "jsdom";
 
 export async function fetchLinks(query: string): Promise<Array<LinkModel>> {
   const result = await db.select().from(links);
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   return result.filter((l) =>
     l.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
   );

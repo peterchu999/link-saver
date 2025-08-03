@@ -88,7 +88,6 @@ export default function AddLinkForm() {
               url={previewMutation.data.url}
               description={previewMutation.data.description}
               favicon={previewMutation.data.favicon}
-              id={previewMutation.data.id}
             />
             {addToCollectionMutation.isError && (
               <h2 className="text-red-500">Fail to add links</h2>
